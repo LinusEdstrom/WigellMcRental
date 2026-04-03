@@ -1,8 +1,5 @@
 package com.edstrom.WigellMcRental.dto;
 
-
-import com.edstrom.WigellMcRental.modell.Address;
-
 import java.time.LocalDate;
 
 public record CustomerDto(

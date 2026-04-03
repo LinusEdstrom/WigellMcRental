@@ -34,4 +34,28 @@ public class ApiExceptionHandler {
                 )
         );
     }
+    @ExceptionHandler(CustomerAndAddressNoMatchException.class)
+    public ResponseEntity<?> handleNoMatch(CustomerAndAddressNoMatchException e) {
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(
+                Map.of(
+                        "timestamp", LocalDateTime.now().toString(),
+                        "status", HttpStatus.CONFLICT.value(),
+                        "error", "customer and address do not match",
+                        "message", e.getMessage()
+                )
+        );
+    }
+    @ExceptionHandler(EmailAlreadyExistsException.class)
+    public ResponseEntity<?> handleEmailExisting(EmailAlreadyExistsException e) {
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(
+                Map.of(
+                        "timestamp", LocalDateTime.now().toString(),
+                        "status", HttpStatus.CONFLICT.value(),
+                        "error", "Error, that email already exists",
+                        "message", e.getMessage()
+                )
+        );
+    }
+
+
 }

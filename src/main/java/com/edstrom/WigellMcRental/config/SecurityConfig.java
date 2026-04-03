@@ -23,6 +23,8 @@ public class SecurityConfig {
                 //så saker funkar från olika domäner
                 .authorizeHttpRequests(auth -> auth
 
+                Ska ju vara STATELESS OCKSÅ, REST PRAXIS
+
                         //USER
                         .requestMatchers(HttpMethod.GET, "/api/v1/availability").hasAnyRole("USER", "ADMIN")
                         .requestMatchers(HttpMethod.POST, "/api/v1/bookings").hasRole("USER")

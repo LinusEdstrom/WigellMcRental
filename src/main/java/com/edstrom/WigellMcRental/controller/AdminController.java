@@ -23,59 +23,7 @@ public class AdminController {
     public AdminController(AdminService adminService){
         this.adminService = adminService;
     }
-    @GetMapping("/customers")
-    public List <CustomerDto> listAllCustomers()
-    {return adminService.findAllCustomers();}
 
-    @GetMapping("/customers/{id}")
-    public CustomerDto getCustomer(@PathVariable Long id)
-    {return adminService.findByCustomerId(id);}
-
-    @PostMapping("/customers")
-    public ResponseEntity<CustomerDto> createCustomer(@RequestBody @Valid CustomerCreateDto dto) {
-        CustomerDto created = adminService.createCustomer(dto);
-
-        URI location = ServletUriComponentsBuilder
-                .fromCurrentRequest()
-                .path("/{id}")
-                .buildAndExpand(created.id()).toUri();
-
-        return ResponseEntity
-                .created(location)
-                .body(created);
-    }
-    @PostMapping("/customers/{customerId}/addresses")
-    public ResponseEntity<AddressDto> createAddress(@RequestBody @Valid AddressCreateDto dto){
-        AddressDto created = adminService.createAddress(dto);
-
-        URI location = ServletUriComponentsBuilder
-                .fromCurrentRequest()
-                .path("/{addressId}")
-                .buildAndExpand(created.id()).toUri();
-
-        return ResponseEntity
-                .created(location)
-                .body(created);
-    }
-    @PutMapping("customers/{customerId}")
-    public CustomerDto updateCustomer(@PathVariable Long id, @RequestBody CustomerUpdateDto dto) {
-        return adminService.customerUpdate(id, dto);
-    }
-
-    @DeleteMapping("/customers/{id}")
-    public ResponseEntity<Void> deleteCustomer (@PathVariable Long id) {
-        adminService.customerDelete(id);
-        return ResponseEntity
-                .noContent().build();
-    }
-    @DeleteMapping("customers/{customerId}/addresses/{addressId}")
-    public ResponseEntity<Void> deleteAddress (
-            @PathVariable Long customerId,
-            @PathVariable Long addressId) {
-        adminService.addressDelete(customerId, addressId);
-        return ResponseEntity
-                .noContent().build();
-    }
 
 
 

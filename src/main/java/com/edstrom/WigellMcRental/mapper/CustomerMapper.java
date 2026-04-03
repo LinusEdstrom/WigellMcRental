@@ -3,6 +3,7 @@ package com.edstrom.WigellMcRental.mapper;
 import com.edstrom.WigellMcRental.dto.AddressDto;
 import com.edstrom.WigellMcRental.dto.CustomerCreateDto;
 import com.edstrom.WigellMcRental.dto.CustomerDto;
+import com.edstrom.WigellMcRental.dto.CustomerUpdateDto;
 import com.edstrom.WigellMcRental.exception.AddressNotFoundException;
 import com.edstrom.WigellMcRental.modell.Address;
 
@@ -25,7 +26,6 @@ public final class CustomerMapper {
                 c.getAddress().getCity()
         );
         }
-
         return new CustomerDto(
         c.getId(),
         c.getFirstName(),
@@ -36,7 +36,6 @@ public final class CustomerMapper {
                 c.getDateOfBirth()
         );
     }
-
     public static Customer toCustomerEntity(CustomerCreateDto dto,
                                             AddressRepository addressRepository){
 
@@ -64,6 +63,23 @@ public final class CustomerMapper {
                     dto.dateOfBirth()
             );
         }
+        public static void applyUpdate(Customer customer, CustomerUpdateDto dto){
+
+            customer.setFirstName(dto.firstName());
+            customer.setLastName(dto.lastName());
+            customer.setEmail(dto.email());
+            customer.setPhoneNumber(dto.phoneNumber());
+            customer.setDateOfBirth(dto.dateOfBirth());
+
+            if (dto.phoneNumber() != null) {
+                customer.setPhoneNumber(dto.phoneNumber());
+            }
+
+            if (dto.dateOfBirth() != null) {
+                customer.setDateOfBirth(dto.dateOfBirth());
+            }
+        }
+
     }
 
 
