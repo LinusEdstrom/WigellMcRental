@@ -5,9 +5,9 @@ import com.edstrom.WigellMcRental.dto.CustomerCreateDto;
 import com.edstrom.WigellMcRental.dto.CustomerDto;
 import com.edstrom.WigellMcRental.dto.CustomerUpdateDto;
 import com.edstrom.WigellMcRental.exception.AddressNotFoundException;
-import com.edstrom.WigellMcRental.modell.Address;
+import com.edstrom.WigellMcRental.model.Address;
 
-import com.edstrom.WigellMcRental.modell.Customer;
+import com.edstrom.WigellMcRental.model.Customer;
 import com.edstrom.WigellMcRental.repository.AddressRepository;
 
 

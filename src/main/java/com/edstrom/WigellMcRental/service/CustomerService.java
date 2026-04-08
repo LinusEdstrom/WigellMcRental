@@ -1,14 +1,10 @@
 package com.edstrom.WigellMcRental.service;
 
 import com.edstrom.WigellMcRental.dto.*;
-import com.edstrom.WigellMcRental.exception.AddressNotFoundException;
-import com.edstrom.WigellMcRental.exception.CustomerAndAddressNoMatchException;
 import com.edstrom.WigellMcRental.exception.CustomerNotFoundException;
 import com.edstrom.WigellMcRental.exception.EmailAlreadyExistsException;
-import com.edstrom.WigellMcRental.mapper.AddressMapper;
 import com.edstrom.WigellMcRental.mapper.CustomerMapper;
-import com.edstrom.WigellMcRental.modell.Address;
-import com.edstrom.WigellMcRental.modell.Customer;
+import com.edstrom.WigellMcRental.model.Customer;
 import com.edstrom.WigellMcRental.repository.AddressRepository;
 import com.edstrom.WigellMcRental.repository.CustomerRepository;
 import org.springframework.stereotype.Service;

@@ -1,18 +1,15 @@
 package com.edstrom.WigellMcRental.service;
 
-import com.edstrom.WigellMcRental.dto.AddressCreateDto;
-import com.edstrom.WigellMcRental.dto.AddressDto;
-import com.edstrom.WigellMcRental.dto.CustomerCreateDto;
-import com.edstrom.WigellMcRental.dto.CustomerDto;
-import com.edstrom.WigellMcRental.exception.AddressNotFoundException;
-import com.edstrom.WigellMcRental.exception.CustomerAndAddressNoMatchException;
-import com.edstrom.WigellMcRental.exception.CustomerNotFoundException;
-import com.edstrom.WigellMcRental.mapper.AddressMapper;
-import com.edstrom.WigellMcRental.mapper.CustomerMapper;
-import com.edstrom.WigellMcRental.modell.Address;
-import com.edstrom.WigellMcRental.modell.Customer;
+import com.edstrom.WigellMcRental.dto.BookingCreateDto;
+import com.edstrom.WigellMcRental.mapper.BookingMapper;
+import com.edstrom.WigellMcRental.model.Address;
+import com.edstrom.WigellMcRental.model.Booking;
+import com.edstrom.WigellMcRental.model.Customer;
+import com.edstrom.WigellMcRental.model.Mc;
 import com.edstrom.WigellMcRental.repository.AddressRepository;
+import com.edstrom.WigellMcRental.repository.BookingRepository;
 import com.edstrom.WigellMcRental.repository.CustomerRepository;
+import com.edstrom.WigellMcRental.repository.McRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,10 +25,16 @@ public class AdminService {
 
     private final CustomerRepository customerRepository;
     private final AddressRepository addressRepository;
+    private final McRepository mcRepository;
+    private final BookingRepository bookingRepository;
 
-    public AdminService(CustomerRepository customerRepository, AddressRepository addressRepository){
+    public AdminService(CustomerRepository customerRepository,
+                        AddressRepository addressRepository,
+                        McRepository mcRepository, BookingRepository bookingRepository){
         this.customerRepository = customerRepository;
         this.addressRepository = addressRepository;
+        this.mcRepository = mcRepository;
+        this.bookingRepository = bookingRepository;
     }
 
     @Transactional
@@ -68,7 +71,40 @@ public class AdminService {
         customerRepository.save(c3);
         customerRepository.save(c4);
         customerRepository.save(c5);
+
+        Mc mc1 = new Mc("Easter", "BunnyHopper", "2009", 900L);
+        Mc mc2 = new Mc("Cruiser", "Harley Davidson", "1998", 400L);
+        Mc mc3 = new Mc("Cross", "Yama hama haha", "2023", 1200L);
+        Mc mc4 = new Mc("Vespa", "RaisinEater", "2018", 400L);
+        Mc mc5 = new Mc("Highway", "FreeFlameBird", "2025", 1400L);
+
+        mcRepository.saveAll(List.of(mc1, mc2, mc3, mc4, mc5));
+
+        Booking b1 = BookingMapper.createBooking(
+                c1,
+                List.of(mc1, mc5),
+                new BookingCreateDto(
+                        c1.getId(),
+                        List.of(mc1.getId(), mc5.getId()),
+                        LocalDate.of(2026, 6, 5),
+                        LocalDate.of(2026, 6, 10)
+                )
+        );
+        Booking b2 = BookingMapper.createBooking(
+                c4,
+                List.of(mc2, mc3),
+                new BookingCreateDto(
+                        c4.getId(),
+                        List.of(mc2.getId(), mc3.getId()),
+                        LocalDate.of(2026, 8, 1),
+                        LocalDate.of(2026, 8, 3)
+                )
+        );
+        bookingRepository.saveAll(List.of(b1, b2));
     }
+
+
+
 
 }
 

@@ -2,7 +2,7 @@ package com.edstrom.WigellMcRental.mapper;
 
 import com.edstrom.WigellMcRental.dto.AddressCreateDto;
 import com.edstrom.WigellMcRental.dto.AddressDto;
-import com.edstrom.WigellMcRental.modell.Address;
+import com.edstrom.WigellMcRental.model.Address;
 
 public final class AddressMapper {
 

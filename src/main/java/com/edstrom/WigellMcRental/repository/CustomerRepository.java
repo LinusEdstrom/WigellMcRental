@@ -1,6 +1,6 @@
 package com.edstrom.WigellMcRental.repository;
 
-import com.edstrom.WigellMcRental.modell.Customer;
+import com.edstrom.WigellMcRental.model.Customer;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface CustomerRepository extends JpaRepository<Customer, Long> {
