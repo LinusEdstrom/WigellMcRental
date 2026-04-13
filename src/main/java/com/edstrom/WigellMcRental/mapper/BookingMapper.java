@@ -6,6 +6,8 @@ import com.edstrom.WigellMcRental.model.Booking;
 import com.edstrom.WigellMcRental.model.Customer;
 import com.edstrom.WigellMcRental.model.Mc;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.List;
 
 public final class BookingMapper {
@@ -35,7 +37,8 @@ public final class BookingMapper {
                     motorcycleIds,
                     booking.getRentalDate(),
                     booking.getReturnDate(),
-                    booking.getTotalPrice(),
+                    booking.getTotalPrice().setScale(2, RoundingMode.HALF_UP),
+                    booking.getTotalPriceGbp().setScale(2, RoundingMode.HALF_UP),
                     booking.getStatus()
             );
         }

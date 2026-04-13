@@ -10,6 +10,7 @@ public record MotorcycleAvailableDto(
     @NotBlank String model,
     @NotBlank String name,
     @NotBlank String year,
-    @NotNull BigDecimal pricePerDay
+    @NotNull BigDecimal pricePerDay,
+    BigDecimal priceGbp
 ) {
 }

@@ -24,21 +24,26 @@ public class AdminService {
     private final AddressRepository addressRepository;
     private final McRepository mcRepository;
     private final BookingRepository bookingRepository;
+    private final PricingService pricingService;
 
 
     public AdminService(CustomerRepository customerRepository,
                         AddressRepository addressRepository,
-                        McRepository mcRepository, BookingRepository bookingRepository
-                        ){
+                        McRepository mcRepository, BookingRepository bookingRepository,
+                        PricingService pricingService){
         this.customerRepository = customerRepository;
         this.addressRepository = addressRepository;
         this.mcRepository = mcRepository;
         this.bookingRepository = bookingRepository;
+        this.pricingService = pricingService;
 
     }
 
     @Transactional
     public void createSampleData() {
+
+        BigDecimal rate = pricingService.getRate("SEK", "GBP");
+
         Address a1 = new Address( "Goa gatan 101", "907 77", "Sövlesborg");
         Address a2 = new Address( "Biltursesplanaden 44", "202 33", "Kiruna");
         Address a3 = new Address( "Stenmursvägen 1", "313 99", "Visby");
@@ -91,6 +96,10 @@ public class AdminService {
                         BigDecimal.valueOf(13800)
                 )
         );
+        // GBP
+        b1.setTotalPriceGbp(
+                b1.getTotalPrice().multiply(rate)
+        );
         Booking b2 = BookingMapper.createBooking(
                 c4,
                 List.of(mc2, mc3),
@@ -102,13 +111,12 @@ public class AdminService {
                         BigDecimal.valueOf(4800)
                 )
         );
-
+        // GBP
+        b2.setTotalPriceGbp(
+                b2.getTotalPrice().multiply(rate)
+        );
         bookingRepository.saveAll(List.of(b1, b2));
     }
-
-
-
-
 }
 
 

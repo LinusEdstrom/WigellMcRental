@@ -39,15 +39,19 @@ public class Booking {
     @Column(nullable = false)
     private BigDecimal totalPrice;
 
+    @Column(nullable = false)
+    private BigDecimal totalPriceGbp;
+
     public Booking(){}
 
     public Booking(Customer customer, List<Mc> mcs, LocalDate rentalDate, LocalDate returnDate,
-                   BigDecimal totalPrice) {
+                   BigDecimal totalPrice, BigDecimal totalPriceGbp) {
         this.customer = customer;
         this.mcs = mcs;
         this.rentalDate = rentalDate;
         this.returnDate = returnDate;
         this.totalPrice = totalPrice;
+        this.totalPriceGbp = totalPriceGbp;
 
     }
 
@@ -74,6 +78,14 @@ public class Booking {
 
     public void setTotalPrice(BigDecimal totalPrice) {
         this.totalPrice = totalPrice;
+    }
+
+    public BigDecimal getTotalPriceGbp() {
+        return totalPriceGbp;
+    }
+
+    public void setTotalPriceGbp(BigDecimal totalPriceGbp) {
+        this.totalPriceGbp = totalPriceGbp;
     }
 
     public Status getStatus() {

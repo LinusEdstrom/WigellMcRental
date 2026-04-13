@@ -3,14 +3,14 @@ package com.edstrom.WigellMcRental.controller;
 import com.edstrom.WigellMcRental.dto.BookingCreateDto;
 import com.edstrom.WigellMcRental.dto.BookingDto;
 import com.edstrom.WigellMcRental.dto.BookingPatchDto;
-import com.edstrom.WigellMcRental.dto.BookingStatusPatchDto;
-import com.edstrom.WigellMcRental.model.Booking;
 import com.edstrom.WigellMcRental.service.BookingService;
 import jakarta.validation.Valid;
-import org.springframework.http.HttpStatus;
+
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import org.springframework.security.core.Authentication;
 
 import java.net.URI;
 import java.util.List;
@@ -46,23 +46,16 @@ public class BookingController {
         return ResponseEntity.created(location).body(booking);
     }
 
-    /*@PatchMapping("/{bookingId}")
+    @PatchMapping("/{bookingId}")
     @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     public ResponseEntity<BookingDto> patchBooking(
             @PathVariable Long bookingId,
-            @RequestBody(required = false) BookingPatchDto dto,
+            @RequestBody BookingPatchDto dto,
             Authentication authentication
     ) {
         return ResponseEntity.ok(
                 bookingService.patchBooking(bookingId, dto, authentication)
         );
-    }
-
-     */
-    @PatchMapping("/{bookingId}")
-    public ResponseEntity<BookingDto> completeBooking(@PathVariable Long bookingId){
-        BookingDto updatedBooking = bookingService.completeBooking(bookingId);
-        return ResponseEntity.ok(updatedBooking);
     }
 
     @DeleteMapping("/{bookingId}")

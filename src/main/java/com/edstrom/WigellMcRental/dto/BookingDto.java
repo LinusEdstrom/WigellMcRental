@@ -14,6 +14,7 @@ public record BookingDto(
         LocalDate rentalDate,
         LocalDate returnDate,
         BigDecimal totalPrice,
+        BigDecimal totalPriceGbp,
 
         Status status
 ) {
