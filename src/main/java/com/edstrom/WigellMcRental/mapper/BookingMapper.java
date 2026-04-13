@@ -19,6 +19,7 @@ public final class BookingMapper {
             booking.setMcs(motorcycles);
             booking.setRentalDate(dto.rentalDate());
             booking.setReturnDate(dto.returnDate());
+            booking.setTotalPrice(dto.totalPrice());
 
             return booking;
         }
@@ -33,7 +34,9 @@ public final class BookingMapper {
                     booking.getCustomer().getId(),
                     motorcycleIds,
                     booking.getRentalDate(),
-                    booking.getReturnDate()
+                    booking.getReturnDate(),
+                    booking.getTotalPrice(),
+                    booking.getStatus()
             );
         }
     }

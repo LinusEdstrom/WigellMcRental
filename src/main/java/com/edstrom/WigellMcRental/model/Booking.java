@@ -1,7 +1,9 @@
 package com.edstrom.WigellMcRental.model;
 
+import com.edstrom.WigellMcRental.service.Status;
 import jakarta.persistence.*;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -29,14 +31,24 @@ public class Booking {
             inverseJoinColumns = @JoinColumn(name = "mc_id")
     )
     private List<Mc> mcs;
+    // Ska få in status här
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Status status = Status.ACTIVE;
+
+    @Column(nullable = false)
+    private BigDecimal totalPrice;
 
     public Booking(){}
 
-    public Booking(Customer customer, List<Mc> mcs, LocalDate rentalDate, LocalDate returnDate) {
+    public Booking(Customer customer, List<Mc> mcs, LocalDate rentalDate, LocalDate returnDate,
+                   BigDecimal totalPrice) {
         this.customer = customer;
         this.mcs = mcs;
         this.rentalDate = rentalDate;
         this.returnDate = returnDate;
+        this.totalPrice = totalPrice;
+
     }
 
     public Long getId() { return id; }
@@ -51,6 +63,27 @@ public class Booking {
 
     public LocalDate getReturnDate() { return returnDate; }
     public void setReturnDate(LocalDate returnDate) { this.returnDate = returnDate; }
+
+    public void setId(Long id) {
+        this.id = id;
     }
+
+    public BigDecimal getTotalPrice() {
+        return totalPrice;
+    }
+
+    public void setTotalPrice(BigDecimal totalPrice) {
+        this.totalPrice = totalPrice;
+    }
+
+    public Status getStatus() {
+        return status;
+    }
+
+    public void setStatus(Status status) {
+        this.status = status;
+    }
+}
+
 
 

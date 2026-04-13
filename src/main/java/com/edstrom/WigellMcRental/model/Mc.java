@@ -2,6 +2,7 @@ package com.edstrom.WigellMcRental.model;
 
 import jakarta.persistence.*;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Entity
@@ -22,15 +23,14 @@ public class Mc {
     private String year;
 
     @Column(nullable = false)
-    private Long pricePerDay;
+    private BigDecimal pricePerDay;
 
-    // Här ska det in att Mc kopplas med booking och att isAvailable ändras till false
     @ManyToMany(mappedBy = "mcs")
     private List<Booking> bookings;
 
     protected Mc(){}
 
-    public Mc(String model, String name, String year, Long pricePerDay){
+    public Mc(String model, String name, String year, BigDecimal pricePerDay){
         this.model = model;
         this.name = name;
         this.year = year;
@@ -70,11 +70,11 @@ public class Mc {
         this.year = year;
     }
 
-    public Long getPricePerDay() {
+    public BigDecimal getPricePerDay() {
         return pricePerDay;
     }
 
-    public void setPricePerDay(Long pricePerDay) {
+    public void setPricePerDay(BigDecimal pricePerDay) {
         this.pricePerDay = pricePerDay;
     }
 

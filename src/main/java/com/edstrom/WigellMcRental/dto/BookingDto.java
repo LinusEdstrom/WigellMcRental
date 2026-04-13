@@ -1,5 +1,8 @@
 package com.edstrom.WigellMcRental.dto;
 
+import com.edstrom.WigellMcRental.service.Status;
+
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -9,7 +12,9 @@ public record BookingDto(
         Long customerId,
         List<Long> motorcycleIds,
         LocalDate rentalDate,
-        LocalDate returnDate
+        LocalDate returnDate,
+        BigDecimal totalPrice,
 
+        Status status
 ) {
 }

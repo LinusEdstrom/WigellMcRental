@@ -13,28 +13,28 @@ import com.edstrom.WigellMcRental.repository.McRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
 @Service
 public class AdminService {
 
-
-    // Borde logging också injiceras plus hur ska den se ut med meddelanden på create, update, delete
-    //private static final Logger log = LoggerFactory.getLogger(CustomerService.class);
-
     private final CustomerRepository customerRepository;
     private final AddressRepository addressRepository;
     private final McRepository mcRepository;
     private final BookingRepository bookingRepository;
 
+
     public AdminService(CustomerRepository customerRepository,
                         AddressRepository addressRepository,
-                        McRepository mcRepository, BookingRepository bookingRepository){
+                        McRepository mcRepository, BookingRepository bookingRepository
+                        ){
         this.customerRepository = customerRepository;
         this.addressRepository = addressRepository;
         this.mcRepository = mcRepository;
         this.bookingRepository = bookingRepository;
+
     }
 
     @Transactional
@@ -72,11 +72,11 @@ public class AdminService {
         customerRepository.save(c4);
         customerRepository.save(c5);
 
-        Mc mc1 = new Mc("Easter", "BunnyHopper", "2009", 900L);
-        Mc mc2 = new Mc("Cruiser", "Harley Davidson", "1998", 400L);
-        Mc mc3 = new Mc("Cross", "Yama hama haha", "2023", 1200L);
-        Mc mc4 = new Mc("Vespa", "RaisinEater", "2018", 400L);
-        Mc mc5 = new Mc("Highway", "FreeFlameBird", "2025", 1400L);
+        Mc mc1 = new Mc("Easter", "BunnyHopper", "2009", BigDecimal.valueOf(900));
+        Mc mc2 = new Mc("Cruiser", "Harley Davidson", "1998", BigDecimal.valueOf(400));
+        Mc mc3 = new Mc("Cross", "Yama hama haha", "2023", BigDecimal.valueOf(1200));
+        Mc mc4 = new Mc("Vespa", "RaisinEater", "2018", BigDecimal.valueOf(400));
+        Mc mc5 = new Mc("Highway", "FreeFlameBird", "2025", BigDecimal.valueOf(1400));
 
         mcRepository.saveAll(List.of(mc1, mc2, mc3, mc4, mc5));
 
@@ -87,7 +87,8 @@ public class AdminService {
                         c1.getId(),
                         List.of(mc1.getId(), mc5.getId()),
                         LocalDate.of(2026, 6, 5),
-                        LocalDate.of(2026, 6, 10)
+                        LocalDate.of(2026, 6, 10),
+                        BigDecimal.valueOf(13800)
                 )
         );
         Booking b2 = BookingMapper.createBooking(
@@ -97,9 +98,11 @@ public class AdminService {
                         c4.getId(),
                         List.of(mc2.getId(), mc3.getId()),
                         LocalDate.of(2026, 8, 1),
-                        LocalDate.of(2026, 8, 3)
+                        LocalDate.of(2026, 8, 3),
+                        BigDecimal.valueOf(4800)
                 )
         );
+
         bookingRepository.saveAll(List.of(b1, b2));
     }
 

@@ -21,7 +21,7 @@ public class MotorcycleAvailableService {
     @Transactional
     public List<MotorcycleAvailableDto> getAvailableMotorcycles(LocalDate from, LocalDate to) {
         // mcRepository already filters unavailable motorcycles
-        return mcRepository.findAvailableMotorcycles(from, to).stream()
+        return mcRepository.findAvailableMotorcycles(from, to, Status.ACTIVE).stream()
                 .map(MotorcycleAvailableMapper::toDto)
                 .toList();
     }

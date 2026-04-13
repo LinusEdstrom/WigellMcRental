@@ -38,7 +38,7 @@ public class McController {
     public List<McDto> listAll(){
         return mcService.findAll();
     }
-    @GetMapping
+    @GetMapping("{id}")
     public McDto get(@PathVariable Long id){
         return mcService.findById(id);
     }

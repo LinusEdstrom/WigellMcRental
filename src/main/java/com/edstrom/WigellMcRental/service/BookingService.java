@@ -1,9 +1,6 @@
 package com.edstrom.WigellMcRental.service;
 
-import com.edstrom.WigellMcRental.dto.BookingCreateDto;
-import com.edstrom.WigellMcRental.dto.BookingDto;
-import com.edstrom.WigellMcRental.dto.BookingPatchDto;
-import com.edstrom.WigellMcRental.dto.MotorcycleAvailableDto;
+import com.edstrom.WigellMcRental.dto.*;
 import com.edstrom.WigellMcRental.exception.*;
 import com.edstrom.WigellMcRental.mapper.BookingMapper;
 import com.edstrom.WigellMcRental.mapper.McMapper;
@@ -14,11 +11,14 @@ import com.edstrom.WigellMcRental.model.Mc;
 import com.edstrom.WigellMcRental.repository.BookingRepository;
 import com.edstrom.WigellMcRental.repository.CustomerRepository;
 import com.edstrom.WigellMcRental.repository.McRepository;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.Period;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 @Service
@@ -36,21 +36,17 @@ public class BookingService {
         this.mcRepository = mcRepository;
     }
     @Transactional(readOnly = true)
-    public List<BookingDto> listBookings(Long customerId){
-        List<Booking> bookings;
-
-        if(customerId !=null){
-            bookings = bookingRepository.findByCustomerId(customerId);
-        }else {
-            bookings = bookingRepository.findAll();
-        }
-        return bookings.stream()
+    public List<BookingDto> findAll(){
+        return bookingRepository.findAll().stream()
                 .map(BookingMapper::toDto)
-                .toList();
+                        .toList();
+        }
+    @Transactional(readOnly = true)
+    public BookingDto findById(Long id){
+        return bookingRepository.findById(id)
+                .map(BookingMapper::toDto)
+                .orElseThrow (() ->new BookingNotFoundException(id));
     }
-
-
-
 
     @Transactional
     public BookingDto createBooking(BookingCreateDto dto) {
@@ -75,24 +71,55 @@ public class BookingService {
         checkMotorcyclesAvailability(motorcycles, dto.rentalDate(), dto.returnDate());
         Booking bookingEntity = BookingMapper.createBooking(customer, motorcycles, dto);
 
+        bookingEntity.setStatus(Status.ACTIVE);
+
+        BigDecimal totalPrice = calculateTotalPrice(
+                motorcycles,
+                dto.rentalDate(),
+                dto.returnDate()
+        );
+        bookingEntity.setTotalPrice(totalPrice);
         Booking savedBooking = bookingRepository.save(bookingEntity);
         return BookingMapper.toDto(savedBooking);
     }
+    public BookingDto completeBooking(Long bookingId) {
+        Booking booking = bookingRepository.findById(bookingId)
+                .orElseThrow(() -> new BookingNotFoundException(bookingId));
 
-    @Transactional
-    public BookingDto patchBooking(Long bookingId, BookingPatchDto dto) {
+        booking.setStatus(Status.COMPLETED);
+
+        return BookingMapper.toDto(bookingRepository.save(booking));
+    }
+
+    /*@Transactional
+    public BookingDto patchBooking(Long bookingId, BookingPatchDto dto, Authentication auth) {
 
         Booking booking = bookingRepository.findById(bookingId)
                 .orElseThrow(() -> new BookingNotFoundException(bookingId));
 
-        LocalDate newStart = dto.rentalDate() != null ? dto.rentalDate() : booking.getRentalDate();
-        LocalDate newEnd = dto.returnDate() != null ? dto.returnDate() : booking.getReturnDate();
+        String role = auth.getAuthorities().iterator().next().getAuthority();
+
+        if (role.equals("ROLE_ADMIN")) {
+
+            booking.setStatus(Status.INACTIVE);
+
+            return BookingMapper.toDto(bookingRepository.save(booking));
+        }
+
+        LocalDate newStart = dto.rentalDate() != null
+                ? dto.rentalDate()
+                : booking.getRentalDate();
+
+        LocalDate newEnd = dto.returnDate() != null
+                ? dto.returnDate()
+                : booking.getReturnDate();
 
         if (newEnd.isBefore(newStart)) {
             throw new IllegalDatesException();
         }
 
         List<Mc> newMotorcycles = booking.getMcs();
+
         if (dto.motorcycleIds() != null && !dto.motorcycleIds().isEmpty()) {
             newMotorcycles = mcRepository.findAllById(dto.motorcycleIds());
         }
@@ -108,15 +135,36 @@ public class BookingService {
         if (anyUnavailable) {
             throw new IllegalMcUnavailableException();
         }
-        // Apply updates
+
         booking.setMcs(newMotorcycles);
         booking.setRentalDate(newStart);
         booking.setReturnDate(newEnd);
 
-        bookingRepository.save(booking);
+        return BookingMapper.toDto(bookingRepository.save(booking));
+    }
+
+    @Transactional
+    public BookingDto patchBookingStatus(Long bookingId) {
+
+        Booking booking = bookingRepository.findById(bookingId)
+                .orElseThrow(() -> new BookingNotFoundException(bookingId));
+
+        booking.setStatus(Status.INACTIVE);
 
         return BookingMapper.toDto(booking);
     }
+
+     */
+
+        @Transactional
+        public void deleteById(Long id) {
+        if (!bookingRepository.existsById(id)){
+            throw new BookingNotFoundException(id);
+        }
+        bookingRepository.deleteById(id);
+        }
+
+
         // Kör den här badboyen på alla availability checkar sen
         private void checkMotorcyclesAvailability (List < Mc > motorcycles, LocalDate rentalStart, LocalDate rentalEnd){
             boolean anyUnavailable = motorcycles.stream()
@@ -130,7 +178,7 @@ public class BookingService {
         public List<MotorcycleAvailableDto> findAvailableMotorcycles (LocalDate from, LocalDate to){
 
             // Filtrera bort motorcyklar som är upptagna
-            List<Mc> available = mcRepository.findAvailableMotorcycles(from, to);
+            List<Mc> available = mcRepository.findAvailableMotorcycles(from, to, Status.ACTIVE);
 
             // Konvertera till DTO
             return available.stream()
@@ -143,6 +191,24 @@ public class BookingService {
         if (age < 18) {
             throw new IllegalAgeException();
         }
+    }
+    private BigDecimal calculateTotalPrice(List<Mc> motorcycles,
+                                           LocalDate start,
+                                           LocalDate end) {
+
+        long days = ChronoUnit.DAYS.between(start, end) + 1;
+
+        return motorcycles.stream()
+                .map(Mc::getPricePerDay)
+                .reduce(BigDecimal.ZERO, BigDecimal::add)
+                .multiply(BigDecimal.valueOf(days));
+    }
+    // Den här va ju lite cool, sätter sec, min, hour, day, month dayofweek
+    //Kollar repo efter bokningar som ska vara COMPLETED
+    @Scheduled(cron = "0 0 0 * * *")
+    @Transactional
+    public void updateCompletedBookings() {
+        bookingRepository.completeOldBookings(LocalDate.now());
     }
 
     }
